@@ -2,20 +2,27 @@ package BankApplication;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import javax.swing.*;
 
 public class BankGUI extends JFrame{
-	
+
 	private JButton addBTN, delete, update, clear;
-	
+
 	private JPanel btnPNL, radioPNL, inputPNL;
-	
+
 	private JTable list;
-	
-	//private JList accounts;
-	
+
+	private JList accounts;
+
 	private JRadioButton checking, savings;
-	
+
 	/**JMenu Item that quits when selected*/
 	private JMenuItem quitItem, loadBin, saveBin, loadText, saveText;
 	private JMenuItem loadXML, saveXML;
@@ -29,92 +36,118 @@ public class BankGUI extends JFrame{
 
 	/**Menu bar to set the items*/
 	private JMenuBar menu;
-	
+
 	private JLabel[] label;
-	
+
+	private JTextField[] tInput;
+
 	public BankGUI(){
+
 		setLayout(new BorderLayout());
 		btnPNL = new JPanel(new GridLayout(4,1));		
 		radioPNL = new JPanel(new GridBagLayout());
 		inputPNL = new JPanel();
 		ButtonListener listener = new ButtonListener();
-		
+
 		addBTN = new JButton("Add");
 		addBTN.addActionListener(listener);
 		btnPNL.add(addBTN);
-		
+
 		delete = new JButton("Delete");
 		delete.addActionListener(listener);
 		btnPNL.add(delete);
-		
+
 		update = new JButton("Update");
 		update.addActionListener(listener);
 		btnPNL.add(update);
-		
+
 		clear = new JButton("Clear");
 		clear.addActionListener(listener);
 		btnPNL.add(clear);
-		
+
 		checking = new JRadioButton("Checkings");
 		checking.addActionListener(listener);
 		radioPNL.add(checking);
-		
+
 		savings = new JRadioButton("Savings");
 		savings.addActionListener(listener);
 		radioPNL.add(savings);
-		
+
 		ButtonGroup group = new ButtonGroup();
 		group.add(checking);
 		group.add(savings);
-		
-		String data[][] = {{"123", "9/10/15", "Sam", "$1,000.00"}};
-		String column[] = {"Number", "Date Opened", "Account Owner", "Balance"};
-		
-		//accounts = new JList();
-		list = new JTable(data, column);
-		list.setBounds(30,40,200,300);
-		JScrollPane sp = new JScrollPane(list);
-		JPanel p = new JPanel();
-		p.add(Box.createRigidArea(new Dimension()));
-		p.add(sp);
-		p.add(Box.createRigidArea(new Dimension(10,10)));
-		
+
+		//String data[][] = {{"123", "9/10/15", "Sam", "$1,000.00"}};
+		//String column[] = {"Number", "Date Opened", "Account Owner", "Balance"};
+
+		accounts = new JList();
+		//list = new JTable(data, column);
+		//list.setBounds(30,40,200,300);
+		//		JScrollPane sp = new JScrollPane(list);
+		//		JPanel p = new JPanel();
+		//		p.add(Box.createRigidArea(new Dimension()));
+		//		p.add(sp);
+		//		p.add(Box.createRigidArea(new Dimension(10,10)));
+
 		inputPNL.add(Box.createRigidArea(new Dimension(10,0)));
 		inputPNL.add(labs());
-		
+
 		JPanel sets = new JPanel(new BorderLayout());
 		sets.add(inputPNL, BorderLayout.CENTER);
 		sets.add(btnPNL, BorderLayout.EAST);
-		
+
 		setJMenuBar(setupMenu());
-		add(p, BorderLayout.NORTH);
+		add(new JScrollPane(accounts), BorderLayout.NORTH);
 		add(radioPNL, BorderLayout.CENTER);
 		add(sets, BorderLayout.SOUTH);
 	}
-	
+
 	private class ButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			
+			BankModel ld = new BankModel();
+			accounts.setModel(ld);
+			accounts.repaint();
+
+			if(e.getSource() == addBTN){
+				int number = Integer.parseInt(tInput[0].getText().trim());
+				String own = tInput[1].getText().trim();
+				double bal = Double.parseDouble(tInput[3].getText().trim());
+				double fee = Double.parseDouble(tInput[4].getText().trim());
+				String dInput = tInput[2].getText().trim();
+				SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+				Date date;
+				try {
+					date = format.parse(dInput);
+					GregorianCalendar cal = new GregorianCalendar();
+					cal.setTime(date);
+					CheckingAccount c = new CheckingAccount(number, own, cal, bal, fee);
+					ld.add(c);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
 		}
 	}
-	
+
 	private JPanel labs(){
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
-	    c.gridy = GridBagConstraints.RELATIVE;
-	    c.gridwidth = 1;
-	    c.gridheight = 1;
-	    c.insets = new Insets(2, 2, 2, 2);
-	    c.anchor = GridBagConstraints.EAST;
-	    
-	    GridBagConstraints b = new GridBagConstraints();
-	    b.gridx = 1;
-	    b.gridy = GridBagConstraints.RELATIVE;
-	    b.weightx = 1.0;
-	    b.fill = GridBagConstraints.HORIZONTAL;
-	    b.anchor = GridBagConstraints.CENTER;
-	    
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(2, 2, 2, 2);
+		c.anchor = GridBagConstraints.EAST;
+
+		GridBagConstraints b = new GridBagConstraints();
+		b.gridx = 1;
+		b.gridy = GridBagConstraints.RELATIVE;
+		b.weightx = 1.0;
+		b.fill = GridBagConstraints.HORIZONTAL;
+		b.anchor = GridBagConstraints.CENTER;
+
 		label = new JLabel[7];
 		label[0] = new JLabel("Account Number: ");
 		label[1] = new JLabel("Account Owner: ");
@@ -123,19 +156,19 @@ public class BankGUI extends JFrame{
 		label[4] = new JLabel("Monthly Fee: ");
 		label[5] = new JLabel("Interest Rate: ");
 		label[6] = new JLabel("Minimum Balance: ");
-		
-		JTextField[] tInput = new JTextField[7];
+
+		tInput = new JTextField[7];
 		for (int i = 0; i < label.length; i++){
 			tInput[i] = new JTextField(20);
-			
+
 			panel.add(label[i], c);
 			label[i].setLabelFor(tInput[i]);
 			panel.add(tInput[i], b);
 		}
-		
+
 		return panel;
 	}
-	
+
 	public JMenuBar setupMenu(){
 		ButtonListener ml = new ButtonListener();
 		menu = new JMenuBar();
@@ -143,7 +176,7 @@ public class BankGUI extends JFrame{
 		fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		menu.add(fileMenu);
-		
+
 		sortMenu = new JMenu("Sort");
 		sortMenu.setMnemonic(KeyEvent.VK_F);
 		menu.add(sortMenu);
@@ -153,10 +186,10 @@ public class BankGUI extends JFrame{
 
 		loadBin = new JMenuItem("Load From Binary...");		
 		saveBin = new JMenuItem("Save As Binary...");
-		
+
 		loadText = new JMenuItem("Load From Text...");
 		saveText = new JMenuItem("Save As Text...");
-		
+
 		loadXML = new JMenuItem("Load From XML...");		
 		saveXML = new JMenuItem("Save As XML...");
 
@@ -166,7 +199,7 @@ public class BankGUI extends JFrame{
 		saveText.addActionListener(ml);
 		loadXML.addActionListener(ml);
 		saveXML.addActionListener(ml);
-		
+
 		fileMenu.add(loadBin);
 		fileMenu.add(saveBin);
 		fileMenu.addSeparator();
@@ -177,15 +210,15 @@ public class BankGUI extends JFrame{
 		fileMenu.add(saveXML);
 		fileMenu.addSeparator();
 		fileMenu.add(quitItem);
-		
+
 		accountN = new JMenuItem("By Account Number");		
 		accountO = new JMenuItem("By Account Owner");
 		dateO = new JMenuItem("By Date Opened");		
-		
+
 		accountN.addActionListener(ml);
 		accountO.addActionListener(ml);
 		dateO.addActionListener(ml);
-		
+
 		sortMenu.add(accountN);
 		sortMenu.add(accountO);
 		sortMenu.add(dateO);

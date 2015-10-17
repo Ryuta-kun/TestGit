@@ -18,7 +18,6 @@ public class CheckingAccount extends Account {
 	public String toString(){
 		String result = super.toString();
 		result += "\nMonthly Fee: " + monthlyFee;
-
 		return result;
 	}
 

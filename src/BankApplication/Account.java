@@ -31,8 +31,12 @@ public abstract class Account implements Serializable{
 	}
 
 	public String toString(){
+		
 		String result = "Number: " + number + "\n" + "Date Opened: ";
-		result += dateOpened + "\n" + "Owner: " + owner + "\n";
+		result += (dateOpened.get(dateOpened.MONTH) + 1) + "/";
+		result += dateOpened.get(dateOpened.DATE) + "/";
+		result += dateOpened.get(dateOpened.YEAR);
+		result += "\n" + "Owner: " + owner + "\n";
 		result += "Balance: " + balance;
 		return result;
 	}
