@@ -11,5 +11,6 @@ public class Hello {
 		bank.pack();
 		bank.setVisible(true);
 		bank.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		bank.setResizable(false);
 	}
 }

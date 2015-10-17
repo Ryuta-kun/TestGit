@@ -4,12 +4,39 @@ import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 public abstract class Account implements Serializable{
-	   private static final long serialVersionUID = 1L;
-	   private int number;
-	   private String owner;
-	   private GregorianCalendar dateOpened;
-	   private double balance;
-	   
+
+	private static final long serialVersionUID = 1L;
+	private int number;
+	private String owner;
+	private GregorianCalendar dateOpened;
+	private double balance;
+
+	public Account(int num, String own, GregorianCalendar d, double bal){
+		number = num;
+		owner = own;
+		dateOpened = d;
+		balance = bal;
+	}
+
+	public boolean equals(Object other){
+		if (other instanceof Account){
+			Account ant = (Account) other;
+			if ((this.number == ant.number) && (this.owner == ant.owner)){
+				if(this.dateOpened == ant.dateOpened)
+					if(this.balance == ant.balance)
+						return true;
+			}
+		}
+		return false;
+	}
+
+	public String toString(){
+		String result = "Number: " + number + "\n" + "Date Opened: ";
+		result += dateOpened + "\n" + "Owner: " + owner + "\n";
+		result += "Balance: " + balance;
+		return result;
+	}
+
 	public int getNumber() {
 		return number;
 	}
@@ -37,6 +64,4 @@ public abstract class Account implements Serializable{
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-
 }
