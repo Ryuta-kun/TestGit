@@ -1,0 +1,5 @@
+Number: 123
+Date Opened: 5/20/2015
+Owner: Josh
+Balance: $10,000.00
+Monthly Fee: $10.00

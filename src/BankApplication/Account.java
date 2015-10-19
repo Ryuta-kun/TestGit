@@ -1,6 +1,7 @@
 package BankApplication;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.GregorianCalendar;
 
 public abstract class Account implements Serializable{
@@ -31,9 +32,13 @@ public abstract class Account implements Serializable{
 	}
 
 	public String toString(){
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		String result = "Number: " + number + "\n" + "Date Opened: ";
-		result += dateOpened + "\n" + "Owner: " + owner + "\n";
-		result += "Balance: " + balance;
+		result += (dateOpened.get(dateOpened.MONTH) + 1) + "/";
+		result += dateOpened.get(dateOpened.DATE) + "/";
+		result += dateOpened.get(dateOpened.YEAR);
+		result += "\n" + "Owner: " + owner + "\n";
+		result += "Balance: " + formatter.format(balance);
 		return result;
 	}
 
