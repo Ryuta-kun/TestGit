@@ -1,5 +1,6 @@
 package BankApplication;
 
+import java.text.NumberFormat;
 import java.util.GregorianCalendar;
 
 public class SavingsAccount extends Account {
@@ -18,9 +19,10 @@ public class SavingsAccount extends Account {
 	}
 
 	public String toString(){
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		String result = super.toString();
-		result += "\nMinimum Balance: " + minBalance;
-		result += "\nInterest Rate: " + interestRate;
+		result += "\nMinimum Balance: " + formatter.format(minBalance);
+		result += "\nInterest Rate: " + formatter.format(interestRate);
 
 		return result;
 	}

@@ -19,7 +19,7 @@ public class BankGUI extends JFrame{
 
 	private JTable list;
 
-	private JList accounts;
+	private JList<Account> accounts;
 
 	private JRadioButton checking, savings;
 
@@ -41,8 +41,9 @@ public class BankGUI extends JFrame{
 
 	private JTextField[] tInput;
 
-	public BankGUI(){
+	private BankModel ld;
 
+	public BankGUI(){
 		setLayout(new BorderLayout());
 		btnPNL = new JPanel(new GridLayout(4,1));		
 		radioPNL = new JPanel(new GridBagLayout());
@@ -80,7 +81,10 @@ public class BankGUI extends JFrame{
 		//String data[][] = {{"123", "9/10/15", "Sam", "$1,000.00"}};
 		//String column[] = {"Number", "Date Opened", "Account Owner", "Balance"};
 
-		accounts = new JList();
+		ld = new BankModel();
+		accounts = new JList<>(ld);
+
+
 		//list = new JTable(data, column);
 		//list.setBounds(30,40,200,300);
 		//		JScrollPane sp = new JScrollPane(list);
@@ -104,29 +108,96 @@ public class BankGUI extends JFrame{
 
 	private class ButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			BankModel ld = new BankModel();
-			accounts.setModel(ld);
-			accounts.repaint();
-
+			if(checking.isSelected()){
+				tInput[4].setEnabled(true);
+				tInput[5].setEnabled(false);
+				tInput[6].setEnabled(false);
+			}else if(savings.isSelected()){
+				tInput[4].setEnabled(false);
+				tInput[5].setEnabled(true);
+				tInput[6].setEnabled(true);
+			}
 			if(e.getSource() == addBTN){
-				int number = Integer.parseInt(tInput[0].getText().trim());
-				String own = tInput[1].getText().trim();
-				double bal = Double.parseDouble(tInput[3].getText().trim());
-				double fee = Double.parseDouble(tInput[4].getText().trim());
-				String dInput = tInput[2].getText().trim();
-				SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-				Date date;
-				try {
-					date = format.parse(dInput);
-					GregorianCalendar cal = new GregorianCalendar();
-					cal.setTime(date);
-					CheckingAccount c = new CheckingAccount(number, own, cal, bal, fee);
-					ld.add(c);
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				if((!tInput[0].getText().trim().equals("")) 
+						&& (!tInput[1].getText().trim().equals("")) 
+						&& (!tInput[3].getText().trim().equals("")) 
+						&& (tInput[0].getText().trim().replaceAll("[a-zA-Z]", "").equals(tInput[0].getText()))
+						&& (tInput[1].getText().trim().replaceAll("[0-9]", "").equals(tInput[1].getText()))
+						&& (tInput[3].getText().trim().replaceAll("[a-zA-Z]", "").equals(tInput[3].getText()))){
+					accounts.repaint();
+					int number = Integer.parseInt(tInput[0].getText().trim());
+					String own = tInput[1].getText().trim();
+					double bal = Double.parseDouble(tInput[3].getText().trim());
+					if(checking.isSelected()){
+						String str = tInput[4].getText().trim();
+						if((!str.equals("")) && (str.replaceAll("[a-zA-Z]", "").equals(str))){
+							double fee = Double.parseDouble(tInput[4].getText().trim());
+							String dInput = tInput[2].getText().trim();
+							Date date;
+							try {
+								SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+								date = format.parse(dInput);
+								GregorianCalendar cal = new GregorianCalendar();
+								cal.setTime(date);
+								CheckingAccount c = new CheckingAccount(number, own, cal, bal, fee);
+								ld.addElement(c);
+							} catch (ParseException e1) {
+								JOptionPane.showMessageDialog(null,"Date format must match MM/dd/yyyy");
+							}
+						}else{
+							JOptionPane.showMessageDialog(null,"Opps! Something went wrong.");
+						}
+					}else if(savings.isSelected()){
+						String s = tInput[5].getText().trim();
+						String d = tInput[6].getText().trim();
+						if((!s.equals("")) && (!d.equals(""))
+								&& (s.replaceAll("[a-zA-Z]", "").equals(s))
+								&& (d.replaceAll("[a-zA-Z]", "").equals(d))){
 
+							double mBal = Double.parseDouble(tInput[5].getText().trim());
+							double r = Double.parseDouble(tInput[6].getText().trim());
+							String dInput = tInput[2].getText().trim();
+							SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+							Date date;
+							try {
+								date = format.parse(dInput);
+								GregorianCalendar cal = new GregorianCalendar();
+								cal.setTime(date);
+								SavingsAccount c = new SavingsAccount(number, own, cal, bal, mBal, r);
+								ld.addElement(c);
+							} catch (ParseException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}else{
+							JOptionPane.showMessageDialog(null,"Opps! Something went wrong.");
+						}
+					}else{
+						JOptionPane.showMessageDialog(null,"Please select one of the check boxes");
+					}
+				}else{
+					JOptionPane.showMessageDialog(null,"Opps! Something went wrong.");
+				}
+			}
+			if(e.getSource() == delete){
+				accounts.repaint();
+				ld.delete(accounts.getSelectedValue());
+			}
+			if(e.getSource() == accountN){
+				ld.sort();
+			}else if(e.getSource() == accountO){
+
+			}else if(e.getSource() == dateO){
+
+			}
+			if(e.getSource() == quitItem){
+				System.exit(0);
+			}
+			if(e.getSource() == saveText){
+				if (accounts.getSelectedIndex() != -1){
+					String play = JOptionPane.showInputDialog(null, "Name of File");
+					ld.saveText(play , accounts.getSelectedValue());
+				}
 			}
 		}
 	}
@@ -154,8 +225,8 @@ public class BankGUI extends JFrame{
 		label[2] = new JLabel("Date Opened: ");
 		label[3] = new JLabel("Account Balance: ");
 		label[4] = new JLabel("Monthly Fee: ");
-		label[5] = new JLabel("Interest Rate: ");
-		label[6] = new JLabel("Minimum Balance: ");
+		label[5] = new JLabel("Minimum Balance: ");
+		label[6] = new JLabel("Interest Rate: ");
 
 		tInput = new JTextField[7];
 		for (int i = 0; i < label.length; i++){

@@ -1,5 +1,6 @@
 package BankApplication;
 
+import java.text.NumberFormat;
 import java.util.GregorianCalendar;
 
 public class CheckingAccount extends Account {
@@ -16,8 +17,9 @@ public class CheckingAccount extends Account {
 	}
 
 	public String toString(){
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		String result = super.toString();
-		result += "\nMonthly Fee: " + monthlyFee;
+		result += "\nMonthly Fee: " + formatter.format(monthlyFee);
 		return result;
 	}
 
