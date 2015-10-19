@@ -12,7 +12,7 @@ public class BankGUI extends JFrame{
 	
 	private JTable list;
 	
-	private JList accounts;
+	//private JList accounts;
 	
 	private JRadioButton checking, savings;
 	
@@ -34,8 +34,8 @@ public class BankGUI extends JFrame{
 	
 	public BankGUI(){
 		setLayout(new BorderLayout());
-		btnPNL = new JPanel(new GridLayout(4,1));
-		radioPNL = new JPanel(new GridLayout(1,2));
+		btnPNL = new JPanel(new GridLayout(4,1));		
+		radioPNL = new JPanel(new GridBagLayout());
 		inputPNL = new JPanel();
 		ButtonListener listener = new ButtonListener();
 		
@@ -62,7 +62,6 @@ public class BankGUI extends JFrame{
 		savings = new JRadioButton("Savings");
 		savings.addActionListener(listener);
 		radioPNL.add(savings);
-		radioPNL.setAlignmentX(CENTER_ALIGNMENT);
 		
 		ButtonGroup group = new ButtonGroup();
 		group.add(checking);
@@ -71,7 +70,7 @@ public class BankGUI extends JFrame{
 		String data[][] = {{"123", "9/10/15", "Sam", "$1,000.00"}};
 		String column[] = {"Number", "Date Opened", "Account Owner", "Balance"};
 		
-		accounts = new JList();
+		//accounts = new JList();
 		list = new JTable(data, column);
 		list.setBounds(30,40,200,300);
 		JScrollPane sp = new JScrollPane(list);
